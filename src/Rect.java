@@ -1,13 +1,14 @@
+import java.awt.*;
 import java.io.InvalidClassException;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Rect {
-    private int A_x;
-    private int A_y;
-    private int B_x;
-    private int B_y;
+    int A_x;
+    int A_y;
+    int B_x;
+    int B_y;
 
     Rect(int _A_x, int _A_y, int _B_x, int _B_y) {
 //        if ((_A_x >= _B_x) || (_A_y <= _B_y)) {
@@ -43,8 +44,7 @@ public class Rect {
     boolean isInside(Rect B) {
         return (this.isInside(B.A_x, B.A_y)) && (this.isInside(B.B_x, B.B_y));
     }
-
-   public Rect conjunction(Rect B){
+    Rect conjunction(Rect B){
         if (this.isInside(B)) {
             return B;
         }
@@ -68,18 +68,44 @@ public class Rect {
 
 }
 
+class DrawRect extends Frame {
+    Rect[] r;
+    int w;
+    int h;
+    DrawRect(Rect[] i_r, int i_w, int i_h) {
+        w = i_w;
+        h = i_h;
+        r = i_r;
+        setSize(h, w);
+        setVisible(true);
+
+    }
+
+    public void paint(Graphics g) {
+        g.drawLine(0, h/2, w, h/2);
+        g.drawLine(w/2, 0, w/2, h);
+        Color[] c = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
+        for(int i=0; i<r.length; i++) {
+            g.setColor(c[i]);
+            g.fillRect(r[i].A_x + w/2, h/2-r[i].A_y, r[i].B_x-r[i].A_x, r[i].B_y-r[i].A_y);
+        }
+    }
+}
+
 class Main {
     public static void main(String[] args) {
-        Rect r = new Rect(0, 10, 10, 0);
-//        System.out.println(r.toString());
-        r.Move(-5, 0);
-        System.out.println(r.toString());
-
-        Rect d = new Rect(6, -1, 7, -2);
-        System.out.println(d.toString());
-        Rect u = r.union(d);
+        Rect r1 = new Rect(0, 10, 10, 0);
+        System.out.println(r1);
+//        r1.Move(-5, 0);
+//        System.out.println(r1);
+        Rect r2 =  new Rect(6, -1, 7, -2);
+        System.out.println(r2);
+        Rect u = r1.union(r2);
         System.out.println(u.toString());
-        Rect c = r.conjunction(d);
+        Rect c = r1.conjunction(r2);
         System.out.println(c);
+        Rect[] rr = {c, r1, r2 ,u};
+        DrawRect DR = new DrawRect(rr, 500, 500);
+//        DR.paint();
     }
 }
