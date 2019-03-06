@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.*;
 import java.io.InvalidClassException;
 
 import static java.lang.Math.*;
@@ -69,47 +70,61 @@ public class Rect {
 
 class DrawRect extends Frame {
     Rect[] r;
-    int w;
-    int h;
-    DrawRect(Rect[] i_r, int i_w, int i_h) {
-        w = i_w;
-        h = i_h;
-        r = i_r;
-        setSize(h, w);
+    int H, W, Ox, Oy;
+    DrawRect(Rect[] rects, int width, int height) {
+        r = rects;
+        W = width;
+        H = height;
+        Ox = W/2;
+        Oy = H/2;
+        setSize(H, W);
         setVisible(true);
     }
 
     public void paint(Graphics g) {
-        g.drawLine(0, h/2, w, h/2);
-        g.drawLine(w/2, 0, w/2, h);
-        Color[] c = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
-        System.out.println("X");
-        int e = 10;
-        for(int i=0; i < w/e; i++) {
-            g.drawLine(i*e, h/2-3, i*e, h/2+3);
-            System.out.println(i);
-            g.drawString(Integer.toString(i-w/(2*e)), i*e, h/2+13);
+        System.out.println("DrawRect.paint");
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, W, H);
+        int e = 40;
+        for (Rect rect : r) {
+            Random rand = new Random();
+            Color randomColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+            g.setColor(randomColor);
+            g.fillRect(Ox + e*rect.A_x, Oy - e*rect.A_y, e*(abs(rect.B_x - rect.A_x)), e*(abs(rect.B_y - rect.A_y)));
         }
-        for(int i=0; i<r.length; i++) {
-            g.setColor(c[i]);
-            g.fillRect(w/2 + r[i].A_x, h/2-r[i].A_y, abs(r[i].B_x - r[i].A_x), abs(r[i].B_y - r[i].A_y));
+        for(int i=Ox%e; i < W; i+=e) { // отрисовка оси OX
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawLine(i, 0, i, H);
+            g.setColor(Color.DARK_GRAY);
+            g.drawLine(i, Oy-5, i, Oy+5);
+            if (i/e - Oy/e != 0) g.drawString(Integer.toString(i/e-Ox/e), i-2, Oy+16);
         }
+        for(int i=Oy%e; i < H; i+=e) { // отрисовка оси OY
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawLine(0, i, W , i);
+            g.setColor(Color.DARK_GRAY);
+            g.drawLine(Ox-5, i,Ox+5 , i);
+            g.drawString(Integer.toString(Oy / e - i / e), Ox + 7, i+4);
+        }
+        g.setColor(Color.DARK_GRAY); // отрисовка осей
+        g.drawLine(0, Oy, W, Oy);
+        g.drawLine(Ox, 0, Ox, H);
     }
 }
 
 class Main {
     public static void main(String[] args) {
-        Rect r1 = new Rect(0, 50, 50, 20);
+        Rect r1 = new Rect(0, 5, 5, 2);
         System.out.println(r1);
 //        r1.Move(-5, 0);
 //        System.out.println(r1);
-        Rect r2 =  new Rect(40, 30, 90, 20);
+        Rect r2 =  new Rect(4, 3, 9, -2);
         System.out.println(r2);
         Rect u = r1.union(r2);
         System.out.println(u.toString());
         Rect c = r1.conjunction(r2);
         System.out.println(c);
         Rect[] rr = {u, r1, r2 ,c};
-        DrawRect DR = new DrawRect(rr, 500, 500);
+        DrawRect DR = new DrawRect(rr, 1366, 768);
     }
 }
