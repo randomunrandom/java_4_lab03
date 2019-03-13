@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.util.*;
-import java.io.InvalidClassException;
 
 import static java.lang.Math.*;
 
@@ -21,7 +20,7 @@ public class Rect {
         B_y = _B_y;
     }
 
-    public Rect union(Rect B) {
+    Rect union(Rect B) {
         Rect r = new Rect(0, 0, 0, 0);
         r.A_x = min(this.A_x, B.A_x);
         r.A_y = max(this.A_y, B.A_y);
@@ -69,8 +68,8 @@ public class Rect {
 }
 
 class DrawRect extends Frame {
-    Rect[] r;
-    int H, W, Ox, Oy;
+    private Rect[] r;
+    private int H, W, Ox, Oy;
     DrawRect(Rect[] rects, int width, int height) {
         r = rects;
         W = width;
@@ -85,7 +84,7 @@ class DrawRect extends Frame {
         System.out.println("DrawRect.paint");
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, W, H);
-        int e = 40;
+        int e = 70;
         for (Rect rect : r) {
             Random rand = new Random();
             Color randomColor = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -97,14 +96,14 @@ class DrawRect extends Frame {
             g.drawLine(i, 0, i, H);
             g.setColor(Color.DARK_GRAY);
             g.drawLine(i, Oy-5, i, Oy+5);
-            if (i/e - Oy/e != 0) g.drawString(Integer.toString(i/e-Ox/e), i-2, Oy+16);
+            if (i/e - Ox/e != 0) g.drawString(Integer.toString(i/e-Ox/e), i-2, Oy+16);
         }
         for(int i=Oy%e; i < H; i+=e) { // отрисовка оси OY
             g.setColor(Color.LIGHT_GRAY);
             g.drawLine(0, i, W , i);
             g.setColor(Color.DARK_GRAY);
             g.drawLine(Ox-5, i,Ox+5 , i);
-            g.drawString(Integer.toString(Oy / e - i / e), Ox + 7, i+4);
+            g.drawString(Integer.toString(Oy / e - i / e), Ox - 16, i+4);
         }
         g.setColor(Color.DARK_GRAY); // отрисовка осей
         g.drawLine(0, Oy, W, Oy);
